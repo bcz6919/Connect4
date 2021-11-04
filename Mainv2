@@ -1,0 +1,50 @@
+from tkinter import *
+
+
+
+def clickedCoordinates(event):
+    print("Clicked x,y:" + str(event.x) + "," + str(event.y))
+    print("Closest: " + str(event.widget.find_closest(event.x, event.y)))
+
+def onObjectClick(event, xCoord, yCoord):
+    myCanvas.itemconfigure(dict[(xCoord, yCoord)], fill="#f20")
+
+def create_circle(x, y, r, canvasName):  # center coordinates, radius
+    x0 = x - r
+    y0 = y - r
+    x1 = x + r
+    y1 = y + r
+    return canvasName.create_oval(x0, y0, x1, y1, outline="white", fill="blue", tags=("clickable"))
+
+def colorUp(myCanvas, xCoord, yCoord):
+    myCanvas.tag_bind(myCircle, "<Button-1>", lambda event: onObjectClick(event, xCoord, yCoord))
+    myCanvas.pack()
+
+root = Tk()
+myCanvas = Canvas(root, bg="blue", width=400, height=400)
+myCanvas.pack()
+
+dict = {}
+
+for x in range(7):
+    for y in range(6):
+        xCoord = 30 + 50 * x
+        yCoord = 100 + 50 * y
+        key = (xCoord, yCoord)
+
+        myCircle = create_circle(xCoord, yCoord, 20, myCanvas)
+        dict[key] = myCircle
+        myCanvas.pack()
+
+xCoord = 30 + 50 * 1
+yCoord = 100 + 50 * 1
+colorUp(myCanvas, xCoord, yCoord)
+
+xCoord = 30 + 50 * 2
+yCoord = 100 + 50 * 2
+colorUp(myCanvas, xCoord, yCoord)
+
+print(dict)
+myCanvas.pack()
+root.mainloop()
+
