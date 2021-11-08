@@ -1,36 +1,68 @@
-import numpy
+
 from tkinter import *
-root = Tk()
-myCanvas = Canvas(root, bg="blue", width=400, height=400)
-myCanvas.pack()
-def onObjectClick(event):                  
-    print ("Clicked x,y:" + str(event.x) + "," + str(event.y))
-    print(" Widget: " + str(event.widget) + "Closest:" + str(event.widget.find_closest(event.x, event.y))) 
-    myCanvas.configure(bg="#f20")
 
-def create_circle(x, y, r, canvasName): #center coordinates, radius
-    x0 = x - r
-    y0 = y - r
-    x1 = x + r
-    y1 = y + r
-    return canvasName.create_oval(x0, y0, x1, y1,outline="#fb0", fill="#fb0", tags=("clickable"))
+def addMenu():   
+    menubar = Menu(window)
+    filemenu = Menu(menubar, tearoff=0)
+    filemenu.add_command(label="New", command=donothing)
+    filemenu.add_command(label="Open", command=donothing)
+    filemenu.add_command(label="Save", command=donothing)
+    filemenu.add_command(label="Save as...", command=donothing)
+    filemenu.add_command(label="Close", command=donothing)
 
+    filemenu.add_separator()
+
+    filemenu.add_command(label="Exit", command=window.quit)
+    menubar.add_cascade(label="File", menu=filemenu)
+    editmenu = Menu(menubar, tearoff=0)
+    editmenu.add_command(label="Undo", command=donothing)
+
+    editmenu.add_separator()
+
+    editmenu.add_command(label="Cut", command=donothing)
+    editmenu.add_command(label="Copy", command=donothing)
+    editmenu.add_command(label="Paste", command=donothing)
+    editmenu.add_command(label="Delete", command=donothing)
+    editmenu.add_command(label="Select All", command=donothing)
+
+    menubar.add_cascade(label="Edit", menu=editmenu)
+    helpmenu = Menu(menubar, tearoff=0)
+    helpmenu.add_command(label="Help Index", command=donothing)
+    helpmenu.add_command(label="About...", command=donothing)
+    menubar.add_cascade(label="Help", menu=helpmenu)
+    window.config(menu=menubar)
+
+
+def key(event):
+    print ("pressed", repr(event.char))
+
+def insertDisc():
+    print("You have clicked Me...")
+    click_btn = PhotoImage(file='yellow.png')
+ 
+def donothing():
+   filewin = Toplevel(window)
+   button = Button(filewin, text="Do nothing button")
+   button.pack()
+
+def callback(myButton):
+    myButton.configure(bg="blue")
+    
+
+window = Tk()
+addMenu()
+
+window.geometry('1000x1000')
 dict = {}
-for x in range(7):
-    for y in range(6):
-        myCircle = create_circle(30+50*x, 100+50*y, 20, myCanvas)
-        myCanvas.tag_bind(myCircle, "<Button-1>", onObjectClick) 
-        myCanvas.pack()
-        key = (x,y)
-        dict[key] = True
-"""
-print(dict)
+for i in range(6):
+    for j in range(7):
+        key = (i, j)
+        frame = Frame(master=window, relief=FLAT, borderwidth=1)
+        frame.grid(row=i, column=j, padx=1, pady=1)
+        click_btn = PhotoImage(file='red_transparent.png')
+        myButton = Button(master=frame, height=5, width=5)
+        dict[key] = myButton
+        myButton.bind("<Button-1>", callback(myButton))
+        myButton.grid()
 
-
-item_type = myCanvas.type(myCircle)
-if item_type == "rectangle":
-    print("rectangle")
-else:
-    print("circle")
-"""
-root.mainloop()
+window.mainloop() 
