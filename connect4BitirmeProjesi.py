@@ -1,68 +1,84 @@
-
 from tkinter import *
 
-def addMenu():   
-    menubar = Menu(window)
-    filemenu = Menu(menubar, tearoff=0)
-    filemenu.add_command(label="New", command=donothing)
-    filemenu.add_command(label="Open", command=donothing)
-    filemenu.add_command(label="Save", command=donothing)
-    filemenu.add_command(label="Save as...", command=donothing)
-    filemenu.add_command(label="Close", command=donothing)
 
-    filemenu.add_separator()
+class Menu:
+    def addMenu(self):
+        self.menubar = Menu(firstWindow)
+        self.filemenu = Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label="New", command=self.donothing)
+        self.filemenu.add_command(label="Open", command=self.donothing)
+        self.filemenu.add_command(label="Save", command=self.donothing)
+        self.filemenu.add_command(label="Save as...", command=self.donothing)
+        self.filemenu.add_command(label="Close", command=self.donothing)
 
-    filemenu.add_command(label="Exit", command=window.quit)
-    menubar.add_cascade(label="File", menu=filemenu)
-    editmenu = Menu(menubar, tearoff=0)
-    editmenu.add_command(label="Undo", command=donothing)
+        self.filemenu.add_separator()
 
-    editmenu.add_separator()
+        self.filemenu.add_command(label="Exit", command=window.quit)
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.editmenu = Menu(self.menubar, tearoff=0)
+        self.editmenu.add_command(label="Undo", command=self.donothing)
 
-    editmenu.add_command(label="Cut", command=donothing)
-    editmenu.add_command(label="Copy", command=donothing)
-    editmenu.add_command(label="Paste", command=donothing)
-    editmenu.add_command(label="Delete", command=donothing)
-    editmenu.add_command(label="Select All", command=donothing)
+        self.editmenu.add_separator()
 
-    menubar.add_cascade(label="Edit", menu=editmenu)
-    helpmenu = Menu(menubar, tearoff=0)
-    helpmenu.add_command(label="Help Index", command=donothing)
-    helpmenu.add_command(label="About...", command=donothing)
-    menubar.add_cascade(label="Help", menu=helpmenu)
-    window.config(menu=menubar)
+        self.editmenu.add_command(label="Cut", command=self.donothing)
+        self.editmenu.add_command(label="Copy", command=self.donothing)
+        self.editmenu.add_command(label="Paste", command=self.donothing)
+        self.editmenu.add_command(label="Delete", command=self.donothing)
+        self.editmenu.add_command(label="Select All", command=self.donothing)
+
+        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+        self.helpmenu = Menu(self.menubar, tearoff=0)
+        self.helpmenu.add_command(label="Help Index", command=self.donothing)
+        self.helpmenu.add_command(label="About...", command=self.donothing)
+        self.menubar.add_cascade(label="Help", menu=self.helpmenu)
+        self.firstWindow.config(menu=self.menubar)
+
+    def donothing(self):
+        filewin = Toplevel(window)
+        button = Button(filewin, text="Do nothing button")
+        button.pack()
 
 
-def key(event):
-    print ("pressed", repr(event.char))
+class App:
 
-def insertDisc():
-    print("You have clicked Me...")
-    click_btn = PhotoImage(file='yellow.png')
- 
-def donothing():
-   filewin = Toplevel(window)
-   button = Button(filewin, text="Do nothing button")
-   button.pack()
+    def insertDisc(self) -> None:
+        if self.myButton['image'] is None:
+            photo = PhotoImage(file=r"C:\Connect4\yellow.png")
 
-def callback(myButton):
-    myButton.configure(bg="blue")
-    
+        else:
+            photo = PhotoImage(file=r"C:\Connect4\red.png")
 
-window = Tk()
-addMenu()
+        self.myButton['image'] = photo
 
-window.geometry('1000x1000')
-dict = {}
-for i in range(6):
-    for j in range(7):
-        key = (i, j)
-        frame = Frame(master=window, relief=FLAT, borderwidth=1)
-        frame.grid(row=i, column=j, padx=1, pady=1)
-        click_btn = PhotoImage(file='red_transparent.png')
-        myButton = Button(master=frame, height=5, width=5)
-        dict[key] = myButton
-        myButton.bind("<Button-1>", callback(myButton))
-        myButton.grid()
+    def __init__(self, window) -> None:
+        window.geometry('1000x1000')
 
-window.mainloop() 
+        self.myDict = {}
+        for i in range(6):
+            for j in range(7):
+                myKey = (i, j)
+                self.frame = Frame(master=window, relief=FLAT, borderwidth=1)
+                self.frame.grid(row=i, column=j, padx=1, pady=1)
+                self.click_btn = PhotoImage(file=r"C:\Connect4\red.png")
+                self.myButton = Button(master=self.frame, height=5, width=5, command=self.insertDisc)
+                self.myButton.pack()
+                self.myDict[myKey] = self.myButton
+
+
+if __name__ == "__main__":
+    window = Tk()
+
+    # Setting the title of the window
+    window.title("Button State App")
+
+    # Setting the geometry i.e Dimensions
+    window.geometry("400x250")
+
+    # Calling our App
+    menu = Menu()
+
+    # Calling our App
+    app = App(window)
+
+    # to run infinitely
+    window.mainloop()
