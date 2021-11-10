@@ -41,30 +41,40 @@ class Menu:
 
 class App:
 
-    def insertDisc(self, myKeyPassed) -> None:
-        myKey = (3, 4)
-        selected = self.myDict[myKey]
-        if self.myButton['image'] is None:
-            photo = PhotoImage(file=r"C:\Connect4\yellow.png")
+    def insertDisc(self, myButton, myDict, i, j, turn) -> None:
+        myKey = (i, j)
+        selected = myDict[myKey]
+
+        if myButton['image'] is None:
+            photo = PhotoImage(file=r"C:\Connect4\yellow.png", width=5, height=5)
 
         else:
-            photo = PhotoImage(file=r"C:\Connect4\red.png")
+            photo = PhotoImage(file=r"C:\Connect4\red.png", width=5, height=5)
 
-        selected['image'] = photo
+        # myButton.__setattr__('image', photo)
+        if turn is 0:
+            myButton['bg'] = "yellow"
+            turn = 1
+        else:
+            myButton['bg'] = "red"
+            turn = 0
+        myButton.pack()
 
     def __init__(self, window) -> None:
         window.geometry('1000x1000')
-
-        self.myDict = {}
+        turn = 0
+        myDict = {}
         for i in range(6):
             for j in range(7):
                 myKey = (i, j)
-                self.frame = Frame(master=window, relief=FLAT, borderwidth=1)
-                self.frame.grid(row=i, column=j, padx=1, pady=1)
-                self.click_btn = PhotoImage(file=r"C:\Connect4\red.png")
-                self.myButton = Button(master=self.frame, width=5, height=5, command=lambda: self.insertDisc(myKey))
-                self.myButton.pack()
-                self.myDict[myKey] = self.myButton
+                frame = Frame(master=window, relief=FLAT, borderwidth=1)
+                frame.grid(row=i, column=j, padx=1, pady=1)
+
+                myButton = Button(master=frame, width=5, height=5)
+                myButton['command'] = lambda theButton=myButton: self.insertDisc(theButton, myDict, i, j, turn)
+                myDict[myKey] = myButton
+
+                myButton.pack()
 
 
 if __name__ == "__main__":
@@ -84,3 +94,4 @@ if __name__ == "__main__":
 
     # to run infinitely
     window.mainloop()
+
