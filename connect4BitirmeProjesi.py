@@ -3,7 +3,7 @@ from tkinter import *
 
 class Menu:
     def addMenu(self):
-        self.menubar = Menu(firstWindow)
+        self.menubar = Menu(window)
         self.filemenu = Menu(self.menubar, tearoff=0)
         self.filemenu.add_command(label="New", command=self.donothing)
         self.filemenu.add_command(label="Open", command=self.donothing)
@@ -31,7 +31,7 @@ class Menu:
         self.helpmenu.add_command(label="Help Index", command=self.donothing)
         self.helpmenu.add_command(label="About...", command=self.donothing)
         self.menubar.add_cascade(label="Help", menu=self.helpmenu)
-        self.firstWindow.config(menu=self.menubar)
+        self.window.config(menu=self.menubar)
 
     def donothing(self):
         filewin = Toplevel(window)
@@ -41,14 +41,16 @@ class Menu:
 
 class App:
 
-    def insertDisc(self) -> None:
+    def insertDisc(self, myKeyPassed) -> None:
+        myKey = (3, 4)
+        selected = self.myDict[myKey]
         if self.myButton['image'] is None:
             photo = PhotoImage(file=r"C:\Connect4\yellow.png")
 
         else:
             photo = PhotoImage(file=r"C:\Connect4\red.png")
 
-        self.myButton['image'] = photo
+        selected['image'] = photo
 
     def __init__(self, window) -> None:
         window.geometry('1000x1000')
@@ -60,7 +62,7 @@ class App:
                 self.frame = Frame(master=window, relief=FLAT, borderwidth=1)
                 self.frame.grid(row=i, column=j, padx=1, pady=1)
                 self.click_btn = PhotoImage(file=r"C:\Connect4\red.png")
-                self.myButton = Button(master=self.frame, height=5, width=5, command=self.insertDisc)
+                self.myButton = Button(master=self.frame, width=5, height=5, command=lambda: self.insertDisc(myKey))
                 self.myButton.pack()
                 self.myDict[myKey] = self.myButton
 
