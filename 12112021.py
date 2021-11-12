@@ -39,12 +39,16 @@ class Menu:
         button.pack()
 
 
-def insertYellowDisc(buttonParam):
+def insertYellowDisc(buttonParam, image):
     buttonParam['bg'] = "yellow"
 
 
-def insertRedDisc(buttonParam):
-    buttonParam['bg'] = "red"
+def insertDisc(buttonParam, image):
+    #buttonParam['bg'] = "red"
+    buttonParam['image'] = image
+    buttonParam['width'] = 70
+    buttonParam['height'] = 70
+    buttonParam.pack()
 
 
 def switchTurn(myTurn):
@@ -58,24 +62,26 @@ def switchTurn(myTurn):
 class App:
 
     def __init__(self, myWindow, myTurn) -> None:
-
+        global img
         for i in range(6):
             for j in range(7):
-                frame = Frame(master=myWindow, relief=FLAT, borderwidth=5, bg="blue")
+                frame = Frame(master=myWindow, relief=FLAT, borderwidth=3, width=10, height=10)
                 frame.grid(row=i, column=j, padx=1, pady=1)
-
-                myButton = Button(master=frame, width=5, height=5)
+                myButton = Button(master=frame, width=7, height=7, bg='blue')
 
                 if myTurn == 0:
-                    myButton['command'] = lambda theButton=myButton: insertYellowDisc(theButton)
+                    img = PhotoImage(file=r"C:\Connect4\yellow.png")
+                    myButton['command'] = lambda theButton=myButton: insertDisc(theButton, img)
+                    myTurn = 1
                 elif myTurn == 1:
-                    myButton['command'] = lambda theButton=myButton: insertRedDisc(theButton)
+                    img = PhotoImage(file=r"C:\Connect4\red.png")
+                    myButton['command'] = lambda theButton=myButton: insertDisc(theButton, img)
+                    myTurn = 0
                 else:
                     print("Error")
 
                 myButton.pack()
 
-                myTurn = switchTurn(myTurn)
 
 
 if __name__ == "__main__":
@@ -87,7 +93,7 @@ if __name__ == "__main__":
     # Setting the geometry i.e Dimensions
     window.geometry('1000x1000')
 
-    window['bg'] = "blue"
+    window["bg"] = "blue"
 
     # Calling our App
     menu = Menu()
