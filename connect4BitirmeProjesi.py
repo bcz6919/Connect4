@@ -46,13 +46,13 @@ class App:
         selected = myDict[myKey]
 
         if myButton['image'] is None:
-            photo = PhotoImage(file=r"C:\Connect4\yellow.png", width=5, height=5)
+            photo = PhotoImage(file=r".\yellow.png", width=5, height=5)
 
         else:
-            photo = PhotoImage(file=r"C:\Connect4\red.png", width=5, height=5)
+            photo = PhotoImage(file=r".\red.png", width=5, height=5)
 
         # myButton.__setattr__('image', photo)
-        if turn is 0:
+        if turn == 0:
             myButton['bg'] = "yellow"
             turn = 1
         else:
