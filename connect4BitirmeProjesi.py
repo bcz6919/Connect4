@@ -39,42 +39,43 @@ class Menu:
         button.pack()
 
 
+def insertYellowDisc(buttonParam):
+    buttonParam['bg'] = "yellow"
+
+
+def insertRedDisc(buttonParam):
+    buttonParam['bg'] = "red"
+
+
+def switchTurn(myTurn):
+    if myTurn == yellowCoin:
+        switchedTurn = redCoin
+    else:
+        switchedTurn = yellowCoin
+    return switchedTurn
+
+
 class App:
 
-    def insertDisc(self, myButton, myDict, i, j, turn) -> None:
-        myKey = (i, j)
-        selected = myDict[myKey]
+    def __init__(self, myWindow, myTurn) -> None:
 
-        if myButton['image'] is None:
-            photo = PhotoImage(file=r".\yellow.png", width=5, height=5)
-
-        else:
-            photo = PhotoImage(file=r".\red.png", width=5, height=5)
-
-        # myButton.__setattr__('image', photo)
-        if turn == 0:
-            myButton['bg'] = "yellow"
-            turn = 1
-        else:
-            myButton['bg'] = "red"
-            turn = 0
-        myButton.pack()
-
-    def __init__(self, window) -> None:
-        window.geometry('1000x1000')
-        turn = 0
-        myDict = {}
         for i in range(6):
             for j in range(7):
-                myKey = (i, j)
-                frame = Frame(master=window, relief=FLAT, borderwidth=1)
+                frame = Frame(master=myWindow, relief=FLAT, borderwidth=5, bg="blue")
                 frame.grid(row=i, column=j, padx=1, pady=1)
 
                 myButton = Button(master=frame, width=5, height=5)
-                myButton['command'] = lambda theButton=myButton: self.insertDisc(theButton, myDict, i, j, turn)
-                myDict[myKey] = myButton
+
+                if myTurn == yellowCoin:
+                    myButton['command'] = lambda theButton=myButton: insertYellowDisc(theButton)
+                elif myTurn == redCoin:
+                    myButton['command'] = lambda theButton=myButton: insertRedDisc(theButton)
+                else:
+                    print("Error")
 
                 myButton.pack()
+
+                myTurn = switchTurn(myTurn)
 
 
 if __name__ == "__main__":
@@ -84,14 +85,19 @@ if __name__ == "__main__":
     window.title("Button State App")
 
     # Setting the geometry i.e Dimensions
-    window.geometry("400x250")
+    window.geometry('1000x1000')
+
+    window['bg'] = "blue"
 
     # Calling our App
     menu = Menu()
 
+    yellowCoin = 0
+    redCoin = 1
+    turn = yellowCoin
+
     # Calling our App
-    app = App(window)
+    app = App(window, turn)
 
     # to run infinitely
     window.mainloop()
-
