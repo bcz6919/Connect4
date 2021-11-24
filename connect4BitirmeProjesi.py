@@ -54,9 +54,27 @@ def switchTurn(myTurn):
         switchedTurn = yellowCoin
     return switchedTurn
 
+class Move:
+    theButton = Button(width=5, height=5)
+    theTurn = 0
+
+    def __init__(self, myButton, myTurn): 
+        self.theButton = myButton
+        self.theTurn = myTurn
+
+
 
 class App:
 
+    def play(self, move):
+        
+        if move.theTurn == yellowCoin:
+            move.theButton['command'] = lambda theButton=move.theButton: insertYellowDisc(theButton)
+        elif move.theTurn == redCoin:
+            move.theButton['command'] = lambda theButton=move.theButton: insertRedDisc(theButton)
+        else:
+            print("Error")
+        move.theButton.pack()
     def __init__(self, myWindow, myTurn) -> None:
 
         for i in range(6):
@@ -65,16 +83,9 @@ class App:
                 frame.grid(row=i, column=j, padx=1, pady=1)
 
                 myButton = Button(master=frame, width=5, height=5)
-
-                if myTurn == yellowCoin:
-                    myButton['command'] = lambda theButton=myButton: insertYellowDisc(theButton)
-                elif myTurn == redCoin:
-                    myButton['command'] = lambda theButton=myButton: insertRedDisc(theButton)
-                else:
-                    print("Error")
-
-                myButton.pack()
-
+                move = Move(myButton, myTurn)
+                self.play(move)
+                
                 myTurn = switchTurn(myTurn)
 
 
