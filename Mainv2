@@ -1,50 +1,103 @@
 from tkinter import *
 
 
+class Menu:
+    def addMenu(self):
+        self.menubar = Menu(window)
+        self.filemenu = Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label="New", command=self.donothing)
+        self.filemenu.add_command(label="Open", command=self.donothing)
+        self.filemenu.add_command(label="Save", command=self.donothing)
+        self.filemenu.add_command(label="Save as...", command=self.donothing)
+        self.filemenu.add_command(label="Close", command=self.donothing)
 
-def clickedCoordinates(event):
-    print("Clicked x,y:" + str(event.x) + "," + str(event.y))
-    print("Closest: " + str(event.widget.find_closest(event.x, event.y)))
+        self.filemenu.add_separator()
 
-def onObjectClick(event, xCoord, yCoord):
-    myCanvas.itemconfigure(dict[(xCoord, yCoord)], fill="#f20")
+        self.filemenu.add_command(label="Exit", command=window.quit)
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.editmenu = Menu(self.menubar, tearoff=0)
+        self.editmenu.add_command(label="Undo", command=self.donothing)
 
-def create_circle(x, y, r, canvasName):  # center coordinates, radius
-    x0 = x - r
-    y0 = y - r
-    x1 = x + r
-    y1 = y + r
-    return canvasName.create_oval(x0, y0, x1, y1, outline="white", fill="blue", tags=("clickable"))
+        self.editmenu.add_separator()
 
-def colorUp(myCanvas, xCoord, yCoord):
-    myCanvas.tag_bind(myCircle, "<Button-1>", lambda event: onObjectClick(event, xCoord, yCoord))
-    myCanvas.pack()
+        self.editmenu.add_command(label="Cut", command=self.donothing)
+        self.editmenu.add_command(label="Copy", command=self.donothing)
+        self.editmenu.add_command(label="Paste", command=self.donothing)
+        self.editmenu.add_command(label="Delete", command=self.donothing)
+        self.editmenu.add_command(label="Select All", command=self.donothing)
 
-root = Tk()
-myCanvas = Canvas(root, bg="blue", width=400, height=400)
-myCanvas.pack()
+        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+        self.helpmenu = Menu(self.menubar, tearoff=0)
+        self.helpmenu.add_command(label="Help Index", command=self.donothing)
+        self.helpmenu.add_command(label="About...", command=self.donothing)
+        self.menubar.add_cascade(label="Help", menu=self.helpmenu)
+        self.window.config(menu=self.menubar)
 
-dict = {}
+    def donothing(self):
+        filewin = Toplevel(window)
+        button = Button(filewin, text="Do nothing button")
+        button.pack()
 
-for x in range(7):
-    for y in range(6):
-        xCoord = 30 + 50 * x
-        yCoord = 100 + 50 * y
-        key = (xCoord, yCoord)
 
-        myCircle = create_circle(xCoord, yCoord, 20, myCanvas)
-        dict[key] = myCircle
-        myCanvas.pack()
+def insertYellowDisc(buttonParam):
+    buttonParam['bg'] = "yellow"
 
-xCoord = 30 + 50 * 1
-yCoord = 100 + 50 * 1
-colorUp(myCanvas, xCoord, yCoord)
 
-xCoord = 30 + 50 * 2
-yCoord = 100 + 50 * 2
-colorUp(myCanvas, xCoord, yCoord)
+def insertRedDisc(buttonParam):
+    buttonParam['bg'] = "red"
 
-print(dict)
-myCanvas.pack()
-root.mainloop()
 
+def switchTurn(myTurn):
+    if myTurn == yellowCoin:
+        switchedTurn = redCoin
+    else:
+        switchedTurn = yellowCoin
+    return switchedTurn
+
+
+class App:
+
+    def __init__(self, myWindow, myTurn) -> None:
+
+        for i in range(6):
+            for j in range(7):
+                frame = Frame(master=myWindow, relief=FLAT, borderwidth=5, bg="blue")
+                frame.grid(row=i, column=j, padx=1, pady=1)
+
+                myButton = Button(master=frame, width=5, height=5)
+
+                if myTurn == yellowCoin:
+                    myButton['command'] = lambda theButton=myButton: insertYellowDisc(theButton)
+                elif myTurn == redCoin:
+                    myButton['command'] = lambda theButton=myButton: insertRedDisc(theButton)
+                else:
+                    print("Error")
+
+                myButton.pack()
+
+                myTurn = switchTurn(myTurn)
+
+
+if __name__ == "__main__":
+    window = Tk()
+
+    # Setting the title of the window
+    window.title("Button State App")
+
+    # Setting the geometry i.e Dimensions
+    window.geometry('1000x1000')
+
+    window['bg'] = "blue"
+
+    # Calling our App
+    menu = Menu()
+
+    yellowCoin = 0
+    redCoin = 1
+    turn = yellowCoin
+
+    # Calling our App
+    app = App(window, turn)
+
+    # to run infinitely
+    window.mainloop()
