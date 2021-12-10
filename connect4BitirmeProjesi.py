@@ -38,8 +38,6 @@ class Menu:
         button.pack()
 
 
-table = {}
-movesDict = {}
 
 
 
@@ -63,23 +61,28 @@ movesDict = {}
 
 
 class App:
-    turn = 0
+    yellowCoin = 0
+    redCoin = 1
+    turn = yellowCoin
+    table = {}
+    movesDict = {}
+    moveCount = -1
 
-    # def switchTurn():
-    #     if turn == 0:
-    #         switchedTurn = 1
-    #     else:
-    #         switchedTurn = 0
-    #     return switchedTurn
+    def check4(self, movesDict):
+        # print (tuple(movesDict))
+        for item in movesDict:
+            print ("Access tuple values:", item[self.moveCount])
 
-    def whichButton(self, i, j, buttonParam):
-        movesDict[0,0] = buttonParam
-        if(self.turn == 0):
-            (table[i,j])["bg"] = "yellow"
-            self.turn = 1
+    def playGame(self, i, j, buttonParam):
+        self.movesDict[i,j] = (buttonParam, self.turn)
+        if(self.turn == self.yellowCoin):
+            (self.table[i,j])["bg"] = "yellow"
+            self.turn = self.redCoin
         else:
-            (table[i,j])["bg"] = "red"
-            self.turn = 0
+            (self.table[i,j])["bg"] = "red"
+            self.turn = self.yellowCoin
+        self.check4(self.movesDict)
+        self.moveCount = self.moveCount + 1
 
 
     def __init__(self, myWindow) -> None:
@@ -91,10 +94,10 @@ class App:
                 theFrame.grid(row=i, column=j, padx=1, pady=1)
 
                 myButton = Button(master=theFrame, width=5, height=5, text=str(i) + "," + str(j), padx=5, pady=5)
-                myButton["command"] = lambda k=i, m=j , buttonParam = myButton: self.whichButton(k, m, buttonParam)
+                myButton["command"] = lambda k=i, m=j , buttonParam = myButton: self.playGame(k, m, buttonParam)
    
                 myButton.pack()
-                table[key]= myButton
+                self.table[key]= myButton
                 theWindow.update()
                 
 
