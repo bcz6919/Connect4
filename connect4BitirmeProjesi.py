@@ -1,4 +1,4 @@
-from ctypes import sizeof
+
 from tkinter import *
 class Menu:
     def addMenu(self):
@@ -38,21 +38,17 @@ class Menu:
         button.pack()
 
 
-def insertYellowDisc(buttonParam):
-    buttonParam['bg'] = "yellow"
+table = {}
+movesDict = {}
 
 
-def insertRedDisc(buttonParam):
-    buttonParam['bg'] = "red"
-
-
-def switchTurn(myTurn):
+def switchTurn(myTurn, i, j):
     if myTurn == yellowCoin:
         switchedTurn = redCoin
     else:
+        (table[i,j])["bg"] = "red"
         switchedTurn = yellowCoin
     return switchedTurn
-
 
 def getClickedPosition(event, frame):
     print(frame["bg"])
@@ -70,37 +66,35 @@ def getClickedPosition(event, frame):
     print(z)
     return z
 
+def whichButton(i, j, buttonParam):
+    movesDict[0,0] = buttonParam
+    if(turn == yellowCoin):
+        (table[i,j])["bg"] = "yellow"
+    else:
+        (table[i,j])["bg"] = "red"
+    switchTurn(turn, i, j)
+
 class App:
-    table = {}
 
     def __init__(self, myWindow, myTurn) -> None:
-        
-        for i in range(6):
-            for j in range(7):
+        for i in range(0,6):
+            for j in range(0,6):
                 key = (i, j)
                 theFrame = Frame(master=myWindow, relief=FLAT, borderwidth=5, bg="blue")
                 theFrame.grid(row=i, column=j, padx=1, pady=1)
+
+                if(i == 0):
+                    myButton = Button(master=theFrame, width=1, height=1, text=str(j)) 
+                    myButton["command"] = lambda k=i, m=j , buttonParam = myButton: whichButton(k, m, buttonParam)
+                    # myButton.bind("<Button-1>", playGame)
+                    myButton.pack()
+                else:
+                    myButton = Button(master=theFrame, width=5, height=5, text=str(i-1) + "," + str(j), padx=5, pady=5)
+                    myButton.pack()
+
+                table[key]= myButton
                 theWindow.update()
-                myButton = Button(master=theFrame, width=5, height=5, text=str(i) + "," + str(j)) 
-
-                myButton.bind("<Button-1>", lambda event:getClickedPosition(event, theFrame))
-                # print(str(theFrame.winfo_rootx()) + "," + str(theFrame.winfo_rootx()))
-                myButton.pack()
-                self.table[key]= myButton
                 
-
-
-     
-    def playGame(self, whoseTurn, myButton):
-        
-        if whoseTurn == yellowCoin:
-            myButton['command'] = lambda theButton=myButton: insertYellowDisc(theButton)
-        elif whoseTurn == redCoin:
-            myButton['command'] = lambda theButton=myButton: insertRedDisc(theButton)
-        else:
-            print("Error")
-        whoseTurn = switchTurn(whoseTurn)
-
 
 if __name__ == "__main__":
     theWindow = Tk()
@@ -109,7 +103,7 @@ if __name__ == "__main__":
     theWindow.title("Connect 4")
 
     # Setting the geometry i.e Dimensions
-    theWindow.geometry('1000x1000')
+    theWindow.geometry('800x800')
 
     theWindow['bg'] = "blue"
 
@@ -120,11 +114,11 @@ if __name__ == "__main__":
     redCoin = 1
     turn = yellowCoin
 
+    action = Button(theWindow, text="clicked")
+
     # Calling our App
     app = App(theWindow, turn)
-    for i in range(42):
-        key = (1, 2)
-        app.playGame(turn, app.table[key])
+
 
     # to run infinitely
     theWindow.mainloop()
