@@ -59,36 +59,86 @@ class Menu:
 
 
 
-
 class App:
     yellowCoin = 0
     redCoin = 1
     turn = yellowCoin
-    table = {}
+    board = {}
     movesDict = {}
     moveCount = -1
 
-    def check4(self, movesDict):
-        # print (tuple(movesDict))
-        for item in movesDict:
-            print ("Access tuple values:", item[self.moveCount])
+    def checkIfNeighborSameColor(self, i, j , color):
+        # Yatay Dikey
+        if((self.board[i,j-1])["bg"] == color):
+            print("board[i,j-1]")
+        if((self.board[i+1,j])["bg"] == color):
+            print("board[i+1,j]")
+        if((self.board[i,j+1])["bg"] == color):
+            print("board[i,j+1]]")
+        if((self.board[i-1,j])["bg"] == color):
+            print("board[i-1,j]")
+
+        # Koseler
+        if((self.board[i-1,j-1])["bg"] == color):
+            print("board[i-1,j-1]")
+        if((self.board[i+1,j-1])["bg"] == color):
+            print("board[i+1,j-1]")
+        if((self.board[i-1,j+1])["bg"] == color):
+            print("board[i-1,j+1]]")
+        if((self.board[i+1,j+1])["bg"] == color):
+            print("board[i+1,j+1]")
+
+    def check4InaRow(self, i, j , color):
+         if((self.board[i,j-1])["bg"] == color):
+            print("board[i,j-1]")       
+
+    def check4(self, i, j):
+        if((self.board[i,j])["bg"] == "yellow"):
+            print("Sari")
+        piece = self.board[i,j]
 
     def playGame(self, i, j, buttonParam):
         self.movesDict[i,j] = (buttonParam, self.turn)
         if(self.turn == self.yellowCoin):
-            (self.table[i,j])["bg"] = "yellow"
+            (self.board[i,j])["bg"] = "yellow"
             self.turn = self.redCoin
         else:
-            (self.table[i,j])["bg"] = "red"
+            (self.board[i,j])["bg"] = "red"
             self.turn = self.yellowCoin
-        self.check4(self.movesDict)
+        self.checkIfNeighborSameColor(i, j, (self.board[i,j])["bg"])
+        # print(self.check4(i,j))
         self.moveCount = self.moveCount + 1
+        # print(self.winning_move(self.board, buttonParam))
 
+    # def winning_move(self, board, piece):
+    #     # Check horizontal locations for win
+    #     for c in range(COLUMN_COUNT-3):
+    #         for r in range(ROW_COUNT):
+    #             if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+    #                 return True
+
+    #     # Check vertical locations for win
+    #     for c in range(COLUMN_COUNT):
+    #         for r in range(ROW_COUNT-3):
+    #             if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+    #                 return True
+
+    #     # Check positively sloped diaganols
+    #     for c in range(COLUMN_COUNT-3):
+    #         for r in range(ROW_COUNT-3):
+    #             if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+    #                 return True
+
+    #     # Check negatively sloped diaganols
+    #     for c in range(COLUMN_COUNT-3):
+    #         for r in range(3, ROW_COUNT):
+    #             if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+    #                 return True
 
     def __init__(self, myWindow) -> None:
 
-        for i in range(0,6):
-            for j in range(0,6):
+        for i in range(0,ROW_COUNT):
+            for j in range(0,COLUMN_COUNT):
                 key = (i, j)
                 theFrame = Frame(master=myWindow, relief=FLAT, borderwidth=5, bg="blue")
                 theFrame.grid(row=i, column=j, padx=1, pady=1)
@@ -97,11 +147,14 @@ class App:
                 myButton["command"] = lambda k=i, m=j , buttonParam = myButton: self.playGame(k, m, buttonParam)
    
                 myButton.pack()
-                self.table[key]= myButton
+                self.board[key]= myButton
                 theWindow.update()
                 
 
 if __name__ == "__main__":
+    COLUMN_COUNT = 7
+    ROW_COUNT = 6
+    tablo = {}
     theWindow = Tk()
     # Setting the title of the window
     theWindow.title("Connect 4")
