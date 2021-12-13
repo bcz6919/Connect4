@@ -66,7 +66,32 @@ class App:
     board = {}
     movesDict = {}
     moveCount = -1
+    
+    def isWinner(color):
+        #check for 4 across
+        for(row = 0; row<ROW_COUNT; row++)
+            for (col = 0;col < COLUMN_COUNT - 3;col++)
+                if ((self.board[row][col] )["bg"] == color && (self.board[row][col+1])["bg"]  == color &&(self.board[row][col+2])["bg"]  == color &&(self.board[row][col+3])["bg"] == color):
+                    return true
 
+        #check for 4 up and down
+        for(row = 0; row < ROW_COUNT - 3; row++)
+            for(col = 0; col < COLUMN_COUNT; col++)
+                if ((self.board[row][col])["bg"] == color   && (self.board[row+1][col])["bg"] == color &&(self.board[row+2][col])["bg"] == color &&(self.board[row+3][col])["bg"] == color):
+                    return true
+
+        #check upward diagonal
+        for(row = 3; row < ROW_COUNT; row++)
+            for(col = 0; col < COLUMN_COUNT - 3; col++)
+                if ((self.board[row][col])["bg"] == color && (self.board[row-1][col+1])["bg"] == color &&(self.board[row-2][col+2])["bg"] == color &&(self.board[row-3][col+3])["bg"] == color):
+                    return true
+
+        #check downward diagonal
+        for(row = 0; row < ROW_COUNT - 3; row++)
+            for(col = 0; col < COLUMN_COUNT - 3; col++)
+                if ((self.board[row][col])["bg"] == color && (self.board[row+1][col+1])["bg"] == color &&(self.board[row+2][col+2])["bg"] == color &&(self.board[row+3][col+3])["bg"] == color):
+                    return true
+                
     def checkIfNeighborSameColor(self, i, j , color):
         # Yatay Dikey
         if((self.board[i,j-1])["bg"] == color):
@@ -106,6 +131,7 @@ class App:
             (self.board[i,j])["bg"] = "red"
             self.turn = self.yellowCoin
         self.checkIfNeighborSameColor(i, j, (self.board[i,j])["bg"])
+        isWinner("yellow")
         # print(self.check4(i,j))
         self.moveCount = self.moveCount + 1
         # print(self.winning_move(self.board, buttonParam))
