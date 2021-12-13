@@ -67,60 +67,48 @@ class App:
     movesDict = {}
     moveCount = -1
     
-    def isWinner(color):
+    def isWinner(self, color):
         #check for 4 across
-        for(row = 0; row<ROW_COUNT; row++)
-            for (col = 0;col < COLUMN_COUNT - 3;col++)
-                if ((self.board[row][col] )["bg"] == color && (self.board[row][col+1])["bg"]  == color &&(self.board[row][col+2])["bg"]  == color &&(self.board[row][col+3])["bg"] == color):
-                    return true
+        for row in range (ROW_COUNT):
+            for col in range (COLUMN_COUNT-3):
+                if ((self.board[row,col] )["bg"] == color and 
+                (self.board[row,col+1])["bg"]  == color and 
+                (self.board[row,col+2])["bg"]  == color and
+                (self.board[row,col+3])["bg"] == color):
+                    print("across")
+                    return True
 
         #check for 4 up and down
-        for(row = 0; row < ROW_COUNT - 3; row++)
-            for(col = 0; col < COLUMN_COUNT; col++)
-                if ((self.board[row][col])["bg"] == color   && (self.board[row+1][col])["bg"] == color &&(self.board[row+2][col])["bg"] == color &&(self.board[row+3][col])["bg"] == color):
-                    return true
+        for row in range (ROW_COUNT-3):
+            for col in range (COLUMN_COUNT):
+                if ((self.board[row,col])["bg"] == color   and 
+                (self.board[row+1,col])["bg"] == color and
+                (self.board[row+2,col])["bg"] == color and
+                (self.board[row+3,col])["bg"] == color):
+                    print("up and down")
+                    return True
 
         #check upward diagonal
-        for(row = 3; row < ROW_COUNT; row++)
-            for(col = 0; col < COLUMN_COUNT - 3; col++)
-                if ((self.board[row][col])["bg"] == color && (self.board[row-1][col+1])["bg"] == color &&(self.board[row-2][col+2])["bg"] == color &&(self.board[row-3][col+3])["bg"] == color):
-                    return true
+        for row in range (ROW_COUNT):
+            for col in range (COLUMN_COUNT-3):
+                if ((self.board[row,col])["bg"] == color and 
+                (self.board[row-1,col+1])["bg"] == color and
+                (self.board[row-2,col+2])["bg"] == color and
+                (self.board[row-3,col+3])["bg"] == color):
+                    print("upward diagonal")
+                    return True
 
         #check downward diagonal
-        for(row = 0; row < ROW_COUNT - 3; row++)
-            for(col = 0; col < COLUMN_COUNT - 3; col++)
-                if ((self.board[row][col])["bg"] == color && (self.board[row+1][col+1])["bg"] == color &&(self.board[row+2][col+2])["bg"] == color &&(self.board[row+3][col+3])["bg"] == color):
-                    return true
+        for row in range (ROW_COUNT-3):
+            for col in range (COLUMN_COUNT-3):
+                if ((self.board[row,col])["bg"] == color and 
+                (self.board[row+1,col+1])["bg"] == color and
+                (self.board[row+2,col+2])["bg"] == color and
+                (self.board[row+3,col+3])["bg"] == color):
+                    print("downward diagonal")
+                    return True
                 
-    def checkIfNeighborSameColor(self, i, j , color):
-        # Yatay Dikey
-        if((self.board[i,j-1])["bg"] == color):
-            print("board[i,j-1]")
-        if((self.board[i+1,j])["bg"] == color):
-            print("board[i+1,j]")
-        if((self.board[i,j+1])["bg"] == color):
-            print("board[i,j+1]]")
-        if((self.board[i-1,j])["bg"] == color):
-            print("board[i-1,j]")
-
-        # Koseler
-        if((self.board[i-1,j-1])["bg"] == color):
-            print("board[i-1,j-1]")
-        if((self.board[i+1,j-1])["bg"] == color):
-            print("board[i+1,j-1]")
-        if((self.board[i-1,j+1])["bg"] == color):
-            print("board[i-1,j+1]]")
-        if((self.board[i+1,j+1])["bg"] == color):
-            print("board[i+1,j+1]")
-
-    def check4InaRow(self, i, j , color):
-         if((self.board[i,j-1])["bg"] == color):
-            print("board[i,j-1]")       
-
-    def check4(self, i, j):
-        if((self.board[i,j])["bg"] == "yellow"):
-            print("Sari")
-        piece = self.board[i,j]
+    
 
     def playGame(self, i, j, buttonParam):
         self.movesDict[i,j] = (buttonParam, self.turn)
@@ -130,36 +118,8 @@ class App:
         else:
             (self.board[i,j])["bg"] = "red"
             self.turn = self.yellowCoin
-        self.checkIfNeighborSameColor(i, j, (self.board[i,j])["bg"])
-        isWinner("yellow")
-        # print(self.check4(i,j))
+        win = self.isWinner((self.board[i,j])["bg"])
         self.moveCount = self.moveCount + 1
-        # print(self.winning_move(self.board, buttonParam))
-
-    # def winning_move(self, board, piece):
-    #     # Check horizontal locations for win
-    #     for c in range(COLUMN_COUNT-3):
-    #         for r in range(ROW_COUNT):
-    #             if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-    #                 return True
-
-    #     # Check vertical locations for win
-    #     for c in range(COLUMN_COUNT):
-    #         for r in range(ROW_COUNT-3):
-    #             if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
-    #                 return True
-
-    #     # Check positively sloped diaganols
-    #     for c in range(COLUMN_COUNT-3):
-    #         for r in range(ROW_COUNT-3):
-    #             if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
-    #                 return True
-
-    #     # Check negatively sloped diaganols
-    #     for c in range(COLUMN_COUNT-3):
-    #         for r in range(3, ROW_COUNT):
-    #             if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
-    #                 return True
 
     def __init__(self, myWindow) -> None:
 
