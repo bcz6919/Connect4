@@ -82,14 +82,48 @@ class App:
         # score = random.random()
         return score
 
-    def is_valid_location(self, board, col):
-        return board[0][col] == 0
+    def is_valid_location(self, board, row, col):
+        return board[row][col] == 0
+
+    def is_valid_location_color(self, board, row, col):
+        return board[row][col]["bg"] != "yellow" and board[row][col]["bg"] != "red"
 
     def get_valid_locations(self, board):
         valid_locations = []
-        for column in range(COLUMN_COUNT):
-            if self.is_valid_location(board, column):
-                valid_locations.append(column)
+        valid = False
+
+        row = 0
+        column = 0
+        while row < ROW_COUNT:
+            while column < COLUMN_COUNT:
+                isValid = self.is_valid_location(board, row, column)
+                prevValid = True
+                if(row != 0):
+                    prevValid = valid_locations[row-1][column] != 0
+                if isValid and prevValid:
+                    key = (row, column)
+                    valid_locations.append(key)
+                else:
+                    upperRow = row
+                    while upperRow < ROW_COUNT:
+                        isValid = self.is_valid_location(board, upperRow, column)
+                        prevValid = True
+                        if(row != 0):
+                            prevValid = valid_locations[row-1][column] != 0
+                        if isValid and prevValid:
+                            key = (upperRow, column)
+                            valid_locations.append(key)
+                            break
+                        else:
+                            upperRow+=1
+                column+=1
+
+            if isValid:
+                break
+            else:
+                column=0
+                row+=1
+
         return valid_locations
 
     def is_terminal_node(self, board):
@@ -99,60 +133,60 @@ class App:
         for r in range(ROW_COUNT):
             if board[r][col] != self.yellowCoin and board[r][col] != self.redCoin:
                 return r
-            else:
-                return r+1
+
 
     def minimax(self, board, depth, alpha, beta, maximizingPlayer):
         valid_locations = self.get_valid_locations(board)
-
         is_terminal = self.is_terminal_node(board)
         if depth == 0 or is_terminal:
             if is_terminal:
                 if self.isWinner(board, self.redCoin):
-                    return (-1, -100000000000000)
+                    return (-1, -1, -100000000000000)
                 elif self.isWinner(board, self.yellowCoin):
-                    return (-1, 10000000000000)
+                    return (-1, -1, 10000000000000)
                 else: # Game is over, no more valid moves
-                    return (-1, 0)
+                    return (-1, -1, 0)
             else: # Depth is zero
                 return (-1, self.score_position(board, self.redCoin))
         if maximizingPlayer:
             value = -math.inf
             column = 0
-            column = random.choice(valid_locations)
-
-            # if(len(self.get_valid_locations()) == 0):
-            for col in valid_locations:
-                row = self.get_next_open_row(board, col)
-
-        # for col in valid_locations:
-        #     row = self.get_next_open_row(col)
-                b_copy = [i for i in self.boardPieces]
-                self.drop_piece(b_copy,row, col, self.redCoin)
-                new_score = self.minimax(b_copy, depth-2, alpha, beta, False)[1]
-                if new_score > value:
-                    value = new_score
-                    column = col
-                alpha = max(alpha, value)
-                if alpha >= beta:
-                    break
-            return column, value
+            valid_locations = self.get_valid_locations(board)
+            validRowCol = random.choice(valid_locations)
+            row = validRowCol[0]
+            column = validRowCol[1]
+            # for col in valid_locations:
+            # row = self.get_next_open_row(board, col[1])
+            b_copy = [i for i in board]
+            self.drop_piece(b_copy,row, column, self.redCoin)
+            new_score = self.minimax(b_copy, depth-2, alpha, beta, False)[1]
+            if new_score > value:
+                value = new_score
+                # column = col[1]
+            alpha = max(alpha, value)
+            # if alpha >= beta:
+            #     break
+            return row, column, value
 
         else: # Minimizing player
-            value = math.inf        
-            column = random.choice(valid_locations)
-            for col in valid_locations:
-                row = self.get_next_open_row(board, col)
-                b_copy = [i for i in self.boardPieces]
-                self.drop_piece(b_copy,row, col, self.yellowCoin)
-                new_score = self.minimax(b_copy, depth-1, alpha, beta, True)[1]
-                if new_score < value:
-                    value = new_score
-                    column = col
-                beta = min(beta, value)
-                if alpha >= beta:
-                    break
-                return column, value
+            value = math.inf    
+            valid_locations = self.get_valid_locations(board)    
+            # column = random.choice(valid_locations)
+            validRowCol = random.choice(valid_locations)
+            row = validRowCol[0]
+            column = validRowCol[1]
+            # for col in valid_locations:
+            #     row = self.get_next_open_row(board, col[1])
+            b_copy = [i for i in board]
+            self.drop_piece(b_copy,row, column, self.yellowCoin)
+            new_score = self.minimax(b_copy, depth-1, alpha, beta, True)[1]
+            if new_score < value:
+                value = new_score
+                # column = col[1]
+            beta = min(beta, value)
+                # if alpha >= beta:
+                #     break
+            return row, column, value
 
     def drop_piece(self, board, row, col, piece):
         if(piece == self.redCoin):
@@ -237,14 +271,15 @@ class App:
         print("Reds turn")
 
     def playRed(self):
-        col, minimax_score = self.minimax(self.boardPieces, 5, -math.inf, math.inf, True)
+        boardCopy = self.boardPieces.copy()
+        row, col, minimax_score = self.minimax(boardCopy, 5, -math.inf, math.inf, True)
         if(col == -1):
             return
-        if self.is_valid_location(self.boardPieces, col):
-            row = self.get_next_open_row(self.boardPieces, col)
-            self.drop_piece(self.boardPieces, row, col, self.redCoin)
-            self.boardButtons[row][col]["bg"] = "red"
-
+        # if self.is_valid_location(self.boardPieces, row, col):
+        # row = self.get_next_open_row(self.boardPieces, col)
+        self.drop_piece(self.boardPieces, row, col, self.redCoin)
+        self.boardButtons[row][col]["bg"] = "red"
+        theWindow.update()
         self.turn = self.yellowCoin
         print("Yellows turn")
 
