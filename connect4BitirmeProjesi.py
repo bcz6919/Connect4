@@ -3,14 +3,12 @@ import time
 import math
 import random
 
-
-
-
 PLAYER = 0
 
 EMPTY = 0
 
 WINDOW_LENGTH = 4
+
 
 class App:
     yellowCoin = 1
@@ -34,13 +32,12 @@ class App:
 
         return score
 
-
     def score_position(self, board, piece):
         score = 0
         center_array = []
         ## Score center column
-        for row in range (int(ROW_COUNT/self.redCoin)):
-            for col in range (int(COLUMN_COUNT/self.redCoin)):
+        for row in range(int(ROW_COUNT)):
+            for col in range(int(COLUMN_COUNT / 2)):
                 center_array.append(board[row][col])
 
         # center_array = [Button(i) for i in list(self.board[:][ COLUMN_COUNT//self.redCoin])]
@@ -50,34 +47,34 @@ class App:
 
         ## Score Horizontal
         row_array = []
-        for row in range (ROW_COUNT):
-            for col in range (COLUMN_COUNT):
+        for row in range(ROW_COUNT):
+            for col in range(COLUMN_COUNT):
                 row_array.append(board[row][col])
 
-            for c in range(COLUMN_COUNT-3):
-                window = row_array[c:c+WINDOW_LENGTH]
+            for c in range(COLUMN_COUNT - 3):
+                window = row_array[c:c + WINDOW_LENGTH]
                 score += self.evaluate_window(window, piece)
 
         ## Score Vertical
         for c in range(COLUMN_COUNT):
             # col_array = [Button(i) for i in list(self.board[:][c])]
             col_array = []
-            for i in range(0,ROW_COUNT):
-                for j in range(0,int(COLUMN_COUNT/self.redCoin)):
+            for i in range(0, ROW_COUNT):
+                for j in range(0, int(COLUMN_COUNT / self.redCoin)):
                     col_array.append(board[i][j])
-            for r in range(ROW_COUNT-3):
-                window = col_array[r:r+WINDOW_LENGTH]
+            for r in range(ROW_COUNT - 3):
+                window = col_array[r:r + WINDOW_LENGTH]
                 score += self.evaluate_window(window, piece)
 
         ## Score posiive sloped diagonal
-        for r in range(ROW_COUNT-3):
-            for c in range(COLUMN_COUNT-3):
-                window = [board[r+i][c+i] for i in range(WINDOW_LENGTH)]
+        for r in range(ROW_COUNT - 3):
+            for c in range(COLUMN_COUNT - 3):
+                window = [board[r + i][c + i] for i in range(WINDOW_LENGTH)]
                 score += self.evaluate_window(window, piece)
 
-        for r in range(ROW_COUNT-3):
-            for c in range(COLUMN_COUNT-3):
-                window = [board[r+3-i][c+i] for i in range(WINDOW_LENGTH)]
+        for r in range(ROW_COUNT - 3):
+            for c in range(COLUMN_COUNT - 3):
+                window = [board[r + 3 - i][c + i] for i in range(WINDOW_LENGTH)]
                 score += self.evaluate_window(window, piece)
         # score = random.random()
         return score
@@ -88,52 +85,57 @@ class App:
     def is_valid_location_color(self, board, row, col):
         return board[row][col]["bg"] != "yellow" and board[row][col]["bg"] != "red"
 
+    # def get_valid_locations(self, board):
+    #     valid_locations = []
+
+    #     row = 0
+    #     column2 = 0
+    #     while row < ROW_COUNT:
+    #         while column2 < COLUMN_COUNT:
+    #             isValid = self.is_valid_location(board, row, column2)
+    #             prevValid = True
+    #         #Bu aşağıdaki koşulda tümünü sağlamıyor. Bu seferde ilk başta 0'lar olduğu için içeri girmiyor. Hiç 0 kalmadıysa buna girme dememiz lazım
+    #             if(any (0 in sublist for sublist in board)):
+    #                 if (row != 0):
+    #                     print(board)
+    #                     prevValid = (valid_locations[row - 1][column2] != 0)
+    #                 if isValid and prevValid:
+    #                     key = (row, column2)
+    #                     valid_locations.append(key)
+    #                 else:
+    #                     upperRow = row
+    #                     while upperRow < ROW_COUNT:
+    #                         isValid = self.is_valid_location(board, upperRow, column2)
+    #                         prevValid = True
+    #                         if (row != 0):
+    #                             prevValid = valid_locations[row - 1][column2] != 0
+    #                         if isValid and prevValid:
+    #                             key = (upperRow, column2)
+    #                             valid_locations.append(key)
+    #                             break
+    #                         else:
+    #                             upperRow += 1
+    #                 column2 += 1
+
+    #         if isValid:
+    #             break
+    #         else:
+    #             column2 = 0
+    #             row += 1
+
+    #     return valid_locations
     def get_valid_locations(self, board):
         valid_locations = []
-        valid = False
-
-        row = 0
-        column = 0
-        while row < ROW_COUNT:
-            while column < COLUMN_COUNT:
-                isValid = self.is_valid_location(board, row, column)
-                prevValid = True
-                if(row != 0):
-                    prevValid = valid_locations[row-1][column] != 0
-                if isValid and prevValid:
-                    key = (row, column)
-                    valid_locations.append(key)
-                else:
-                    upperRow = row
-                    while upperRow < ROW_COUNT:
-                        isValid = self.is_valid_location(board, upperRow, column)
-                        prevValid = True
-                        if(row != 0):
-                            prevValid = valid_locations[row-1][column] != 0
-                        if isValid and prevValid:
-                            key = (upperRow, column)
-                            valid_locations.append(key)
-                            break
-                        else:
-                            upperRow+=1
-                column+=1
-
-            if isValid:
-                break
-            else:
-                column=0
-                row+=1
 
         return valid_locations
-
+        
     def is_terminal_node(self, board):
-        return self.isWinner(board, self.yellowCoin) or self.isWinner(board, self.redCoin)
+        return self.isWinner(board, self.yellowCoin) or self.isWinner(board, self.redCoin)  or len(self.get_valid_locations(board)) == 0
 
     def get_next_open_row(self, board, col):
         for r in range(ROW_COUNT):
             if board[r][col] != self.yellowCoin and board[r][col] != self.redCoin:
                 return r
-
 
     def minimax(self, board, depth, alpha, beta, maximizingPlayer):
         valid_locations = self.get_valid_locations(board)
@@ -144,53 +146,58 @@ class App:
                     return (-1, -1, -100000000000000)
                 elif self.isWinner(board, self.yellowCoin):
                     return (-1, -1, 10000000000000)
-                else: # Game is over, no more valid moves
+                else:  # Game is over, no more valid moves
                     return (-1, -1, 0)
-            else: # Depth is zero
-                return (-1, self.score_position(board, self.redCoin))
+            else:  # Depth is zero
+                return (-1, -1, self.score_position(board, self.redCoin))
         if maximizingPlayer:
             value = -math.inf
             column = 0
-            valid_locations = self.get_valid_locations(board)
+            # valid_locations = self.get_valid_locations(board)
             validRowCol = random.choice(valid_locations)
             row = validRowCol[0]
             column = validRowCol[1]
-            # for col in valid_locations:
-            # row = self.get_next_open_row(board, col[1])
-            b_copy = [i for i in board]
-            self.drop_piece(b_copy,row, column, self.redCoin)
-            new_score = self.minimax(b_copy, depth-2, alpha, beta, False)[1]
-            if new_score > value:
-                value = new_score
-                # column = col[1]
-            alpha = max(alpha, value)
-            # if alpha >= beta:
-            #     break
+            for location in valid_locations:
+                col=location[1]
+                row = location[0]
+                # row = self.get_next_open_row(board, col)
+                b_copy = board.copy()
+                self.drop_piece(b_copy, row, col, self.redCoin)
+                new_score = self.minimax(b_copy, depth - 1, alpha, beta, False)[2]
+                if new_score > value:
+                    value = new_score
+                    column = col
+                alpha = max(alpha, value)
+                if alpha >= beta:
+                    break
+
             return row, column, value
 
-        else: # Minimizing player
-            value = math.inf    
-            valid_locations = self.get_valid_locations(board)    
+        else:  # Minimizing player
+            value = math.inf
+            # valid_locations = self.get_valid_locations(board)
             # column = random.choice(valid_locations)
             validRowCol = random.choice(valid_locations)
             row = validRowCol[0]
             column = validRowCol[1]
-            # for col in valid_locations:
-            #     row = self.get_next_open_row(board, col[1])
-            b_copy = [i for i in board]
-            self.drop_piece(b_copy,row, column, self.yellowCoin)
-            new_score = self.minimax(b_copy, depth-1, alpha, beta, True)[1]
-            if new_score < value:
-                value = new_score
-                # column = col[1]
-            beta = min(beta, value)
-                # if alpha >= beta:
-                #     break
+            for location in valid_locations:
+                col = location[1]
+                row = location[0]
+                # row = self.get_next_open_row(board, col)
+                b_copy = board.copy()
+                self.drop_piece(b_copy, row, col, self.yellowCoin)
+                new_score = self.minimax(b_copy, depth - 1, alpha, beta, True)[2]
+                if new_score < value:
+                    value = new_score
+                    column = col
+                beta = min(beta, value)
+                if alpha >= beta:
+                    break
             return row, column, value
 
     def drop_piece(self, board, row, col, piece):
-        if(piece == self.redCoin):
-            if((board[row][col]) == self.redCoin or (board[row][col]) == self.yellowCoin):
+        if (piece == self.redCoin):
+            if ((board[row][col]) == self.redCoin or (board[row][col]) == self.yellowCoin):
                 print("already clicked")
                 # self.playRed( row, col)
             else:
@@ -200,70 +207,68 @@ class App:
             (board[row][col]) = self.yellowCoin
             self.turn = self.redCoin
 
-
-    def checkAcross(self, board, color): 
-        #check for 4 across
-        for row in range (ROW_COUNT):
-            for col in range (COLUMN_COUNT-3):
-                if (((board[row][col]) ) == color and 
-                (board[row][col+1])  == color and 
-                (board[row][col+2])  == color and
-                (board[row][col+3]) == color):
+    def checkAcross(self, board, color):
+        # check for 4 across
+        for row in range(ROW_COUNT):
+            for col in range(COLUMN_COUNT - 3):
+                if (((board[row][col])) == color and
+                        (board[row][col + 1]) == color and
+                        (board[row][col + 2]) == color and
+                        (board[row][col + 3]) == color):
                     print("across")
                     return True
                 else:
                     return False
 
-    def checkUpAndDown(self, board, color): 
-        #check for 4 up and down
-        for row in range (ROW_COUNT-3):
-            for col in range (COLUMN_COUNT):
-                if (((board[row][col])) == color   and 
-                (board[row+1][col]) == color and
-                (board[row+2][col]) == color and
-                (board[row+3][col]) == color):
+    def checkUpAndDown(self, board, color):
+        # check for 4 up and down
+        for row in range(ROW_COUNT - 3):
+            for col in range(COLUMN_COUNT):
+                if (((board[row][col])) == color and
+                        (board[row + 1][col]) == color and
+                        (board[row + 2][col]) == color and
+                        (board[row + 3][col]) == color):
                     print("up and down")
                     return True
                 else:
                     return False
 
-    def checkUpwardDiagonal(self, board, color): 
-        #check upward diagonal
-        for row in range (ROW_COUNT):
-            for col in range (COLUMN_COUNT-3):
-                if (((board[row][col])) == color and 
-                (board[row-1][col+1]) == color and
-                (board[row-self.redCoin][col+2]) == color and
-                (board[row-3][col+3]) == color):
+    def checkUpwardDiagonal(self, board, color):
+        # check upward diagonal
+        for row in range(ROW_COUNT):
+            for col in range(COLUMN_COUNT - 3):
+                if (((board[row][col])) == color and
+                        (board[row - 1][col + 1]) == color and
+                        (board[row - self.redCoin][col + 2]) == color and
+                        (board[row - 3][col + 3]) == color):
                     print("upward diagonal")
                     return True
                 else:
                     return False
 
-    def checkDownwardDiagonal(self, board, color): 
-        #check downward diagonal
-        for row in range (ROW_COUNT-3):
-            for col in range (COLUMN_COUNT-3):
-                if (((board[row][col])) == color and 
-                (board[row+1][col+1]) == color and
-                (board[row+2][col+2]) == color and
-                (board[row+3][col+3]) == color):
+    def checkDownwardDiagonal(self, board, color):
+        # check downward diagonal
+        for row in range(ROW_COUNT - 3):
+            for col in range(COLUMN_COUNT - 3):
+                if (((board[row][col])) == color and
+                        (board[row + 1][col + 1]) == color and
+                        (board[row + 2][col + 2]) == color and
+                        (board[row + 3][col + 3]) == color):
                     print("downward diagonal")
                     return True
                 else:
                     return False
 
-
     def isWinner(self, board, piece):
-        if(self.checkAcross(board, piece) or
-            self.checkUpAndDown(board, piece) or
-            self.checkUpwardDiagonal(board, piece) or    
-            self.checkDownwardDiagonal(board, piece)):
+        if (self.checkAcross(board, piece) or
+                self.checkUpAndDown(board, piece) or
+                self.checkUpwardDiagonal(board, piece) or
+                self.checkDownwardDiagonal(board, piece)):
             print(" wins")
             return True
         else:
             return False
-                
+
     def playYellow(self, i, j):
         self.drop_piece(self.boardPieces, i, j, self.yellowCoin)
         self.boardButtons[i][j]["bg"] = "yellow"
@@ -273,7 +278,7 @@ class App:
     def playRed(self):
         boardCopy = self.boardPieces.copy()
         row, col, minimax_score = self.minimax(boardCopy, 5, -math.inf, math.inf, True)
-        if(col == -1):
+        if (col == -1):
             return
         # if self.is_valid_location(self.boardPieces, row, col):
         # row = self.get_next_open_row(self.boardPieces, col)
@@ -284,35 +289,31 @@ class App:
         print("Yellows turn")
 
     def playGame(self, i, j):
-        self.playYellow(i,j)
-        if(self.isWinner(self.boardPieces, self.boardPieces[i][j])):
+        self.playYellow(i, j)
+        if (self.isWinner(self.boardPieces, self.boardPieces[i][j])):
             return
         self.playRed()
-        if(self.isWinner(self.boardPieces, self.boardPieces[i][j])):
+        if (self.isWinner(self.boardPieces, self.boardPieces[i][j])):
             return
 
     def initialize_board(self):
-        self.boardPieces = [[0 for x in range(ROW_COUNT)] for y in range(COLUMN_COUNT)] 
-        self.boardButtons = [[0 for x in range(ROW_COUNT)] for y in range(COLUMN_COUNT)] 
+        self.boardPieces = [[0 for x in range(ROW_COUNT)] for y in range(COLUMN_COUNT)]
+        self.boardButtons = [[0 for x in range(ROW_COUNT)] for y in range(COLUMN_COUNT)]
 
     def __init__(self, myWindow) -> None:
         # self.board = [[0]*COLUMN_COUNT]*ROW_COUNT
         self.initialize_board()
-        for i in range(0,ROW_COUNT):
-            for j in range(0,COLUMN_COUNT):
-
+        for i in range(0, ROW_COUNT):
+            for j in range(0, COLUMN_COUNT):
                 theFrame = Frame(master=myWindow, relief=FLAT, borderwidth=5, bg="blue")
                 theFrame.grid(row=i, column=j, padx=1, pady=1)
                 myButton = Button(master=theFrame, width=5, height=5, text=str(i) + "," + str(j), padx=5, pady=5)
-                myButton["command"] = lambda k=i, m=j , buttonParam = myButton: self.playGame(k, m)
+                myButton["command"] = lambda k=i, m=j, buttonParam=myButton: self.playGame(k, m)
                 myButton.pack()
-                self.boardButtons[i][j]= myButton
+                self.boardButtons[i][j] = myButton
 
                 theWindow.update()
 
-
-
-               
 
 if __name__ == "__main__":
     ROW_COUNT = 6
