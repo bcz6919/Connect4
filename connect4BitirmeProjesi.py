@@ -28,7 +28,7 @@ class App:
             score += 100
         elif window.count(piece) == 3 and window.count(0) == 1:
             score += 5
-        elif window.count(piece) == self.redCoin and window.count(0) == self.redCoin:
+        elif window.count(piece) == 2 and window.count(0) == 2:
             score += self.redCoin
 
         return score
