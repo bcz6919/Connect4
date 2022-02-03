@@ -127,6 +127,17 @@ class App:
     def get_valid_locations(self, board):
         valid_locations = []
 
+        for r in range(ROW_COUNT):
+            for c in range(COLUMN_COUNT):
+                empty = board[r][c] == 0 
+                key = (r, c)
+                if(r != 0):
+                    if(empty and (board[r-1][c]) != 0):
+                        valid_locations.append(key)
+                else:
+                    if(empty and (board[0][c]) == 0):
+                        valid_locations.append(key)
+
         return valid_locations
         
     def is_terminal_node(self, board):
@@ -196,16 +207,13 @@ class App:
             return row, column, value
 
     def drop_piece(self, board, row, col, piece):
-        if (piece == self.redCoin):
-            if ((board[row][col]) == self.redCoin or (board[row][col]) == self.yellowCoin):
-                print("already clicked")
-                # self.playRed( row, col)
-            else:
+        if(self.is_valid_location(board, row, col)):
+            if (piece == self.redCoin):
                 (board[row][col]) = self.redCoin
                 self.turn = self.yellowCoin
-        else:
-            (board[row][col]) = self.yellowCoin
-            self.turn = self.redCoin
+            else:
+                (board[row][col]) = self.yellowCoin
+                self.turn = self.redCoin
 
     def checkAcross(self, board, color):
         # check for 4 across
@@ -239,7 +247,7 @@ class App:
             for col in range(COLUMN_COUNT - 3):
                 if (((board[row][col])) == color and
                         (board[row - 1][col + 1]) == color and
-                        (board[row - self.redCoin][col + 2]) == color and
+                        (board[row - 2][col + 2]) == color and
                         (board[row - 3][col + 3]) == color):
                     print("upward diagonal")
                     return True
