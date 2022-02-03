@@ -41,8 +41,6 @@ class App:
             for col in range(int(COLUMN_COUNT / 2)):
                 center_array.append(board[row][col])
 
-        # center_array = [Button(i) for i in list(self.board[:][ COLUMN_COUNT//self.redCoin])]
-        # center_count = center_array.count(piece)
         center_count = center_array.count(piece)
         score += center_count * 3
 
@@ -83,9 +81,6 @@ class App:
     def is_valid_location(self, board, row, col):
         return board[row][col] == 0
 
-    def is_valid_location_color(self, board, row, col):
-        return board[row][col]["bg"] != "yellow" and board[row][col]["bg"] != "red"
-
     def get_valid_locations(self, board):
         valid_locations = []
         for r in range(ROW_COUNT):
@@ -103,11 +98,6 @@ class App:
         
     def is_terminal_node(self, board):
         return self.winning_move(board, self.yellowCoin) or self.winning_move(board, self.redCoin)  or len(self.get_valid_locations(board)) == 0
-
-    def get_next_open_row(self, board, col):
-        for r in range(ROW_COUNT):
-            if board[r][col] != self.yellowCoin and board[r][col] != self.redCoin:
-                return r
 
     def minimax(self, board, depth, alpha, beta, maximizingPlayer):
         valid_locations = self.get_valid_locations(board)
@@ -151,7 +141,6 @@ class App:
                 # print("location: " + str(location), end =" ")
                 col=location[1]
                 r = location[0]
-                # row = self.get_next_open_row(board, col)
                 b_copy = copy.deepcopy(board)
                 self.drop_piece(b_copy, r, col, self.redCoin)
                 new_score = self.minimax(b_copy, depth - 1, alpha, beta, False)[2]
@@ -180,7 +169,6 @@ class App:
                 # print("location: " + str(location), end =" ")
                 col = location[1]
                 r = location[0]
-                # row = self.get_next_open_row(board, col)
                 b_copy = copy.deepcopy(board)
                 self.drop_piece(b_copy, r, col, self.yellowCoin)
                 new_score = self.minimax(b_copy, depth - 1, alpha, beta, True)[2]
@@ -268,8 +256,6 @@ class App:
             # self.playRed()
             pass
         else:
-            # if self.is_valid_location(self.boardPieces, row, col):
-            # row = self.get_next_open_row(self.boardPieces, col)
             self.drop_piece(self.boardPieces, row, col, self.redCoin)
             print("RED PLAYED " + str(row) + "," + str(col))
             self.boardButtons[row][col]["bg"] = "red"
